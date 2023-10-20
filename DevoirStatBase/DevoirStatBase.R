@@ -32,6 +32,7 @@ beta_carotene_conso_median <- median(tpRetinol$betadiet)
 retinol_conso_median <- median(tpRetinol$retdiet)
 cholesterol_median <- median(tpRetinol$cholesterol)
 alcool_median <- median(tpRetinol$alcool)
+retinol_plasmatique_median <- median(tpRetinol$retplasma)
 
 # Scinder les variables quantitatives en deux
 age_b <- ifelse(tpRetinol$age > age_median, 1, 0)
@@ -42,6 +43,7 @@ beta_carotene_conso_b <- ifelse(tpRetinol$betadiet > beta_carotene_conso_median,
 retinol_conso_b <- ifelse(tpRetinol$retdiet > retinol_conso_median, 1, 0)
 cholesterol_b <- ifelse(tpRetinol$cholesterol > cholesterol_median, 1, 0)
 alcool_b <- ifelse(tpRetinol$alcool > alcool_median, 1, 0)
+retinol_plasmatique_b <- ifelse(tpRetinol$retplasma > retinol_plasmatique_median, 1, 0)
 
 # Question 2 : 
 # variables dinteret : concentration retinol plasmatique, age, sexe, BMI, tabac, consommation alimentaire de vitamines, cholesterol, alcool, retinol
@@ -161,6 +163,45 @@ cor(tpRetinol$retdiet, tpRetinol$alcool, use="complete.obs")
 #2.36 Relation entre cholesterol et alcool
 cor(tpRetinol$cholesterol, tpRetinol$alcool, use="complete.obs")
 
-# Question 3
+# Question 3 Regression lineaire avec comme variable à expliquer "retinol plasmatique concentration"
+# et les autres variables explicatives
+regression_linaire <- lm(tpRetinol$retplasma~tpRetinol$age
+                         +tpRetinol$sexe
+                         +tpRetinol$bmi
+                         +tpRetinol$tabac
+                         +tpRetinol$betadiet
+                         +tpRetinol$retdiet
+                         +tpRetinol$cholesterol
+                         +tpRetinol$alcool
+                         , data=tpRetinol)
+summary(regression_linaire)
+hist(resid(regression_linaire), col="grey", main="")
 
-# Question 4
+# Rechercher synergies
+data_intereset <- tpRetinol[, c("retplasma", "age", "sexe", "bmi", "tabac",
+                                "betadiet", "retdiet", "cholesterol", "alcool")]
+regression_lineaire_synergies <- lm(data_intereset$retplasma ~ .^2, data=data_intereset )
+
+# Question 4 Regression logistique
+regression_logistique <- glm(retinol_plasmatique_b~tpRetinol$age
+                             +tpRetinol$sexe
+                             +tpRetinol$bmi
+                             +tpRetinol$tabac
+                             +tpRetinol$betadiet
+                             +tpRetinol$retdiet
+                             +tpRetinol$cholesterol
+                             +tpRetinol$alcool
+                             , data=tpRetinol
+                             , family = "binomial")
+summary(regression_logistique)
+exp(coefficients(regression_logistique)) # calcul des coefficients
+exp(confint(regression_logistique)) # calcul des intervalles de confiance
+drop1(regression_logistique,.~.,test="Chisq")
+
+# Rechercher synergies
+data_interest_logicstic <- data_intereset
+data_interest_logicstic$retplasma <- retinol_plasmatique_b
+regression_logistique_synergies <- glm(data_interest_logicstic$retplasma ~ .^2, 
+                                      data=data_interest_logicstic,
+                                      family = "binomial")
+summary(regression_logistique_synergies)
