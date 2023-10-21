@@ -46,6 +46,14 @@ cholesterol_b <- ifelse(tpRetinol$cholesterol > cholesterol_median, 1, 0)
 alcool_b <- ifelse(tpRetinol$alcool > alcool_median, 1, 0)
 retinol_plasmatique_b <- ifelse(tpRetinol$retplasma > retinol_plasmatique_median, 1, 0)
 
+# Nous avons trois variables qualitatives, qu'on va encoder comme facteurs.
+tpRetinol$sexe.fact     <- factor(tpRetinol$sexe,levels=c(1,2),
+                             labels=c("Masculin","Féminin"))
+tpRetinol$tabac.fact    <- factor(tpRetinol$tabac,levels=c(1,2,3),
+                             labels=c("Jamais","Autrefois","Actuellement"))
+tpRetinol$vitamine.fact <- factor(tpRetinol$vitamine,levels=c(1,2,3),
+                             labels=c("Souvent","Pas souvent","Non"))
+
 # Question 2 : 
 # variables dinteret : concentration retinol plasmatique, age, sexe, BMI, tabac, consommation alimentaire de vitamines, cholesterol, alcool, retinol
 
@@ -150,7 +158,7 @@ data_interest <- tpRetinol[, c("retplasma", "age", "sexe", "bmi", "tabac",
 regression_lineaire_synergies <- lm(data_interest$retplasma ~ .^2, data=data_interest)
 summary(regression_lineaire_synergies)
 
-synergies_interest <- c("age", "sexe", "bmi", "tabac", "betadiet", "vitamine", "cholesterol", "alcool")
+synergies_interest <- c("age", "sexe.fact", "bmi", "tabac.fact", "retdiet", "vitamine.fact", "cholesterol", "alcool")
 results_list <- list()
 for (i in 1:(length(synergies_interest)-1)) {
   for (j in (i+1):length(synergies_interest)) {
@@ -175,10 +183,10 @@ for (i in 1:(length(synergies_interest)-1)) {
                                               ":",p_value_interact,
                                                ifelse(p_value_interact<0.05,"*",
                                                       ""),""))
-    
-    print(results_list)
   }
 }
+
+print(results_list)
 
 # Question 4 Regression logistique
 regression_logistique <- glm(retinol_plasmatique_b~tpRetinol$age
@@ -203,3 +211,34 @@ regression_logistique_synergies <- glm(data_interest_logicstic$retplasma ~ .^2,
                                       data=data_interest_logicstic,
                                       family = "binomial")
 summary(regression_logistique_synergies)
+
+
+results_logistic_list <- list()
+for (i in 1:(length(synergies_interest)-1)) {
+  for (j in (i+1):length(synergies_interest)) {
+    interact1 <- synergies_interest[i]
+    interact2 <- synergies_interest[j]
+    
+    # Compute independant variable
+    independant_var <- synergies_interest
+    independant_var <- independant_var[! independant_var%in% c(interact1, interact2)]
+    
+    result <- glm(retinol_plasmatique_b~tpRetinol[, interact1]*tpRetinol[, interact2]
+                 +tpRetinol[, independant_var[1]]
+                 +tpRetinol[, independant_var[2]]
+                 +tpRetinol[, independant_var[3]]
+                 +tpRetinol[, independant_var[4]]
+                 +tpRetinol[, independant_var[5]]
+                 +tpRetinol[, independant_var[6]]
+                 , data=data_interest_logicstic
+                 , family = "binomial")
+    p_value_interact <- drop1(result, .~., test="Chisq")[10,5]
+    # Sauvegarder les résultats de la paire de variables
+    results_logistic_list <- append(results_logistic_list,paste("petit p pour",interact1,"-",interact2,
+                                              ":",p_value_interact,
+                                              ifelse(p_value_interact<0.05,"*",
+                                                     ""),""))
+  }
+}
+
+print(results_logistic_list)
