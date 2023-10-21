@@ -122,7 +122,7 @@ Compute_quantitative_stat("alcool", tpRetinol$alcool, alcool_explicatives)
 
 # Sexe
 sexe_explicatives <- cbind(retinol_plasmatique_b, age_b, bmi_b, tabac_b, 
-                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+                          beta_carotene_conso_b:w, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_qualitative_stat("sexe", sexe_b, sexe_explicatives)
 
 # Tabac
@@ -137,18 +137,48 @@ regression_linaire <- lm(tpRetinol$retplasma~tpRetinol$age
                          +tpRetinol$bmi
                          +tpRetinol$tabac
                          +tpRetinol$betadiet
-                         +tpRetinol$retdiet
+                         +tpRetinol$vitamine
                          +tpRetinol$cholesterol
                          +tpRetinol$alcool
                          , data=tpRetinol)
 summary(regression_linaire)
-hist(resid(regression_linaire), col="grxey", main="")
+hist(resid(regression_linaire), col="grey", main="")
 
 # Rechercher synergies
 data_interest <- tpRetinol[, c("retplasma", "age", "sexe", "bmi", "tabac",
-                                "betadiet", "retdiet", "cholesterol", "alcool")]
+                                "betadiet", "vitamine", "cholesterol", "alcool")]
 regression_lineaire_synergies <- lm(data_interest$retplasma ~ .^2, data=data_interest)
 summary(regression_lineaire_synergies)
+
+synergies_interest <- c("age", "sexe", "bmi", "tabac", "betadiet", "vitamine", "cholesterol", "alcool")
+results_list <- list()
+for (i in 1:(length(synergies_interest)-1)) {
+  for (j in (i+1):length(synergies_interest)) {
+    interact1 <- synergies_interest[i]
+    interact2 <- synergies_interest[j]
+    
+    # Compute independant variable
+    independant_var <- synergies_interest
+    independant_var <- independant_var[! independant_var%in% c(interact1, interact2)]
+    
+    result <- lm(tpRetinol$retplasma~tpRetinol[, interact1]*tpRetinol[, interact2]
+                 +tpRetinol[, independant_var[1]]
+                 +tpRetinol[, independant_var[2]]
+                 +tpRetinol[, independant_var[3]]
+                 +tpRetinol[, independant_var[4]]
+                 +tpRetinol[, independant_var[5]]
+                 +tpRetinol[, independant_var[6]]
+                 , data=tpRetinol)
+    p_value_interact <- drop1(result, .~., test="F")[10,6]
+    # Sauvegarder les résultats de la paire de variables
+    results_list <- append(results_list,paste("petit p pour",interact1,"-",interact2,
+                                              ":",p_value_interact,
+                                               ifelse(p_value_interact<0.05,"*",
+                                                      ""),""))
+    
+    print(results_list)
+  }
+}
 
 # Question 4 Regression logistique
 regression_logistique <- glm(retinol_plasmatique_b~tpRetinol$age
@@ -156,7 +186,7 @@ regression_logistique <- glm(retinol_plasmatique_b~tpRetinol$age
                              +tpRetinol$bmi
                              +tpRetinol$tabac
                              +tpRetinol$betadiet
-                             +tpRetinol$retdiet
+                             +tpRetinol$vitamine
                              +tpRetinol$cholesterol
                              +tpRetinol$alcool
                              , data=tpRetinol
