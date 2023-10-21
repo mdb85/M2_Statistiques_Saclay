@@ -54,6 +54,12 @@ quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet",
                        "retdiet", "cholesterol", "alcool")
 matrix_correlation <- cor(tpRetinol[, quantitative_var], use = "complete.obs")
 corrplot(matrix_correlation, method = "circle")
+for (i in quantitative_var) {
+  for (j in quantitative_var) {
+    result <- cor.test(tpRetinol[, i], tpRetinol[, j], use = "complete.obs")
+    print(paste(i, j, result$estimate, result$p.value))
+  }
+}
 
 # Fonction permettant de réaliser un test de student pour comparer 2 moyennes
 Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
@@ -64,7 +70,7 @@ Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
   } 
 }
 
-# Fonction permettant de réaliser un test de student pour comparer 2 moyennes
+# Fonction permettant de réaliser un test du chi 2
 Compute_qualitative_stat <- function(name, var_expliquer, var_explicatives) {
   for(i in 1:ncol(age_explicatives)) {
     #rr <- twoby2(1-var_expliquer, 1-var_explicatives[, i])
@@ -136,7 +142,7 @@ regression_linaire <- lm(tpRetinol$retplasma~tpRetinol$age
                          +tpRetinol$alcool
                          , data=tpRetinol)
 summary(regression_linaire)
-hist(resid(regression_linaire), col="grey", main="")
+hist(resid(regression_linaire), col="grxey", main="")
 
 # Rechercher synergies
 data_interest <- tpRetinol[, c("retplasma", "age", "sexe", "bmi", "tabac",
