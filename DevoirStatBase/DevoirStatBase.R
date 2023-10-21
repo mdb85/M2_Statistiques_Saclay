@@ -88,6 +88,7 @@ t.test(tpRetinol$age~tpRetinol$sexe, var.equal=TRUE)
 #2.14 Relation entre age et cholesterol
 
 #2.15 Relation entre age et alcool
+t.test(tpRetinol$age, tpRetinol$alcool)
 
 #2.16 Relation entre sexe et BMI
 
@@ -135,11 +136,49 @@ chisq.test(sexe_b, beta_carotene_conso_b)
 
 #2.36 Relation entre cholesterol et alcool
 
-# Compute correlation
+# Calcul de correlation
 quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet", 
                        "retdiet", "cholesterol", "alcool")
 matrix_correlation <- cor(tpRetinol[, quantitative_var], use = "complete.obs")
 corrplot(matrix_correlation, method = "circle")
+
+# Calcul test statistiques
+Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
+  for(i in 1:ncol(age_explicatives)) {
+    result <- t.test(var_expliquer~var_explicatives[, i]
+                     , var.equal=TRUE, paired = FALSE)
+    print(paste(name, colnames(var_explicatives)[i], result$p.value))
+  } 
+}
+
+# Retplasma
+retplasma_explicatives <- cbind(age_b, sexe_b, bmi_b, tabac_b, beta_carotene_conso_b, 
+           retinol_conso_b, cholesterol_b, alcool_b)
+Compute_quantitative_stat("retplasma", tpRetinol$retplasma, retplasma_explicatives)
+
+# Age
+qqnorm(tpRetinol$age)
+age_explicatives <- cbind(retinol_plasmatique_b, sexe_b, bmi_b, tabac_b, 
+                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+Compute_quantitative_stat("age", tpRetinol$age, age_explicatives)
+
+# BMI
+qqnorm(tpRetinol$bmi)
+bmi_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, tabac_b, 
+                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+Compute_quantitative_stat("bmi", tpRetinol$bmi, bmi_explicatives)
+
+# Betadiet
+qqnorm(tpRetinol$betadiet)
+betadiet_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
+                          tabac_b, retinol_conso_b, cholesterol_b, alcool_b)
+Compute_quantitative_stat("betadiet", tpRetinol$betadiet, betadiet_explicatives)
+
+# Retinoldiet
+qqnorm(tpRetinol$retdiet)
+retdiet_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
+                               tabac_b, beta_carotene_conso_b, cholesterol_b, alcool_b)
+Compute_quantitative_stat("retdiet", tpRetinol$retdiet, retdiet_explicatives)
 
 # Question 3 Regression lineaire avec comme variable à expliquer "retinol plasmatique concentration"
 # et les autres variables explicatives
@@ -159,15 +198,7 @@ hist(resid(regression_linaire), col="grey", main="")
 data_interest <- tpRetinol[, c("retplasma", "age", "sexe", "bmi", "tabac",
                                 "betadiet", "retdiet", "cholesterol", "alcool")]
 regression_lineaire_synergies <- lm(data_interest$retplasma ~ .^2, data=data_interest)
-tt <- lm(data_interest$retplasma ~ (data_interest$age
-                                     +data_interest$sexe
-                                     +data_interest$bmi
-                                     +data_interest$tabac
-                                     +data_interest$betadiet
-                                     +data_interest$retdiet
-                                     +data_interest$cholesterol
-                                     +data_interest$alcool)^2
-                                      , data=data_interest)
+summary(regression_lineaire_synergies)
 
 # Question 4 Regression logistique
 regression_logistique <- glm(retinol_plasmatique_b~tpRetinol$age
