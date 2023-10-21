@@ -49,16 +49,6 @@ retinol_plasmatique_b <- ifelse(tpRetinol$retplasma > retinol_plasmatique_median
 # Question 2 : 
 # variables dinteret : concentration retinol plasmatique, age, sexe, BMI, tabac, consommation alimentaire de vitamines, cholesterol, alcool, retinol
 
-#2.16 Relation entre sexe et BMI
-
-#2.17 Relation entre sexe et tabac
-twoby2(1-sexe_b, 1-tabac_b)
-chisq.test(sexe_b, tabac_b)
-
-#2.18 Relation entre sexe et beta-carotene consomme
-twoby2(1-sexe_b, 1-beta_carotene_conso_b)
-chisq.test(sexe_b, beta_carotene_conso_b)
-
 # Calcul de correlation
 quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet", 
                        "retdiet", "cholesterol", "alcool")
