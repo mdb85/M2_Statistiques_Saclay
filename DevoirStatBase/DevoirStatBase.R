@@ -59,23 +59,26 @@ chisq.test(sexe_b, tabac_b)
 twoby2(1-sexe_b, 1-beta_carotene_conso_b)
 chisq.test(sexe_b, beta_carotene_conso_b)
 
-#2.19 Relation entre sexe et retinol consomme
-
-#2.20 Relation entre sexe et cholesterol
-
-#2.21 Relation entre sexe et alcool
-
 # Calcul de correlation
 quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet", 
                        "retdiet", "cholesterol", "alcool")
 matrix_correlation <- cor(tpRetinol[, quantitative_var], use = "complete.obs")
 corrplot(matrix_correlation, method = "circle")
 
-# Calcul test statistiques : fonction permettant de réaliser un test de student pour comparer 2 moyennes
+# Fonction permettant de réaliser un test de student pour comparer 2 moyennes
 Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
   for(i in 1:ncol(age_explicatives)) {
     result <- t.test(var_expliquer~var_explicatives[, i]
                      , var.equal=TRUE, paired = FALSE)
+    print(paste(name, colnames(var_explicatives)[i], result$p.value))
+  } 
+}
+
+# Fonction permettant de réaliser un test de student pour comparer 2 moyennes
+Compute_qualitative_stat <- function(name, var_expliquer, var_explicatives) {
+  for(i in 1:ncol(age_explicatives)) {
+    #rr <- twoby2(1-var_expliquer, 1-var_explicatives[, i])
+    result <- chisq.test(var_expliquer, var_explicatives[, i])
     print(paste(name, colnames(var_explicatives)[i], result$p.value))
   } 
 }
@@ -120,6 +123,16 @@ qqnorm(tpRetinol$alcool)
 alcool_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
                                   tabac_b, beta_carotene_conso_b, retinol_conso_b, cholesterol_b)
 Compute_quantitative_stat("alcool", tpRetinol$alcool, alcool_explicatives)
+
+# Sexe
+sexe_explicatives <- cbind(retinol_plasmatique_b, age_b, bmi_b, tabac_b, 
+                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+Compute_qualitative_stat("sexe", sexe_b, sexe_explicatives)
+
+# Tabac
+tabac_explicatives <- cbind(retinol_plasmatique_b, age_b, bmi_b, sexe_b, 
+                           beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+Compute_qualitative_stat("tabac", tabac_b, tabac_explicatives)
 
 # Question 3 Regression lineaire avec comme variable à expliquer "retinol plasmatique concentration"
 # et les autres variables explicatives
