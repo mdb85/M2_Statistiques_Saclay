@@ -49,47 +49,6 @@ retinol_plasmatique_b <- ifelse(tpRetinol$retplasma > retinol_plasmatique_median
 # Question 2 : 
 # variables dinteret : concentration retinol plasmatique, age, sexe, BMI, tabac, consommation alimentaire de vitamines, cholesterol, alcool, retinol
 
-#2.1 Relation entre Retinol plasmatique et age
-qqnorm(tpRetinol$retplasma)
-t.test(tpRetinol$retplasma~age_b, var.equal=TRUE)
-
-#2.2 Relation entre Retinol plasmatique et sexe
-t.test(tpRetinol$retplasma~tpRetinol$sexe, var.equal=TRUE)
-
-#2.3 Relation entre Retinol plasmatique et BMI
-t.test(tpRetinol$retplasma~bmi_b, var.equal=TRUE)
-
-#2.4 Relation entre Retinol plasmatique et tabac
-t.test(tpRetinol$retplasma~tabac_b, var.equal=TRUE)
-
-#2.5 Relation entre Retinol plasmatique et beta-carotene consommé
-t.test(tpRetinol$retplasma~beta_carotene_conso_b, var.equal=TRUE)
-
-#2.6 Relation entre Retinol plasmatique et retinol consommé
-t.test(tpRetinol$retplasma~retinol_conso_b, var.equal=TRUE)
-
-#2.7 Relation entre Retinol plasmatique et cholesterol
-t.test(tpRetinol$retplasma~cholesterol_b, var.equal=TRUE)
-
-#2.8 Relation entre Retinol plasmatique et alcool
-t.test(tpRetinol$retplasma~alcool_b, var.equal=TRUE)
-
-#2.9 Relation entre age et sexe
-t.test(tpRetinol$age~tpRetinol$sexe, var.equal=TRUE)
-
-#2.10 Relation entre age et BMI
-
-#2.11 Relation entre age et tabac
-
-#2.12 Relation entre age et beta-carotene consomme
-
-#2.13 Relation entre age et retinol consomme
-
-#2.14 Relation entre age et cholesterol
-
-#2.15 Relation entre age et alcool
-t.test(tpRetinol$age, tpRetinol$alcool)
-
 #2.16 Relation entre sexe et BMI
 
 #2.17 Relation entre sexe et tabac
@@ -106,43 +65,13 @@ chisq.test(sexe_b, beta_carotene_conso_b)
 
 #2.21 Relation entre sexe et alcool
 
-#2.22 Relation entre BMI et tabac
-
-#2.23 Relation entre BMI et beta-carotene consomme
-
-#2.24 Relation entre BMI et retinol consomme
-
-#2.25 Relation entre BMI et cholesterol
-
-#2.26 Relation entre BMI et alcool
-
-#2.27 Relation entre tabac et beta-carotene consomme
-
-#2.28 Relation entre tabac et retinol consomme
-
-#2.29 Relation entre tabac et cholesterol
-
-#2.30 Relation entre tabac et alcool
-
-#2.31 Relation entre beta-carotene consomme et retinol consomme
-
-#2.32 Relation entre beta-carotene consomme et cholesterol
-
-#2.33 Relation entre beta-carotene consomme et alcool
-
-#2.34 Relation entre retinol consomme consomme et cholesterol
-
-#2.35 Relation entre retinol consomme consomme et alcool
-
-#2.36 Relation entre cholesterol et alcool
-
 # Calcul de correlation
 quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet", 
                        "retdiet", "cholesterol", "alcool")
 matrix_correlation <- cor(tpRetinol[, quantitative_var], use = "complete.obs")
 corrplot(matrix_correlation, method = "circle")
 
-# Calcul test statistiques
+# Calcul test statistiques : fonction permettant de réaliser un test de student pour comparer 2 moyennes
 Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
   for(i in 1:ncol(age_explicatives)) {
     result <- t.test(var_expliquer~var_explicatives[, i]
@@ -179,6 +108,18 @@ qqnorm(tpRetinol$retdiet)
 retdiet_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
                                tabac_b, beta_carotene_conso_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("retdiet", tpRetinol$retdiet, retdiet_explicatives)
+
+# Cholesterol
+qqnorm(tpRetinol$cholesterol)
+cholesterol_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
+                              tabac_b, beta_carotene_conso_b, retinol_conso_b, alcool_b)
+Compute_quantitative_stat("cholesterol", tpRetinol$cholesterol, cholesterol_explicatives)
+
+# Alcool
+qqnorm(tpRetinol$alcool)
+alcool_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
+                                  tabac_b, beta_carotene_conso_b, retinol_conso_b, cholesterol_b)
+Compute_quantitative_stat("alcool", tpRetinol$alcool, alcool_explicatives)
 
 # Question 3 Regression lineaire avec comme variable à expliquer "retinol plasmatique concentration"
 # et les autres variables explicatives
