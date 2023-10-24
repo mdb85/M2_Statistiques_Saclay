@@ -154,7 +154,21 @@ hist(resid(regression_linaire), col="grey", main="")
 
 drop1(regression_linaire, .~., test="F")
 
-# Rechercher synergies
+# Diagramme de normalité
+x11()
+plot(regression_linaire, 2, 
+     main = "Diagramme de normalité des résidus du modèle linéaire")
+
+# Variance des résidus
+x11()
+plot(regression_linaire, 1)
+
+# Recherche des sujets influents
+x11()
+plot(regression_linaire, 4,
+     main = "Recherche des sujets influents")
+
+# Rechercher synergiesp
 data_interest <- tpRetinol[, c("retplasma", "age", "sexe.fact", "bmi", "tabac.fact",
                                 "retdiet", "vitamine.fact", "cholesterol", "alcool")]
 regression_lineaire_synergies <- lm(data_interest$retplasma ~ .^2, data=data_interest)
