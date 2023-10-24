@@ -168,7 +168,7 @@ x11()
 plot(regression_linaire, 4,
      main = "Recherche des sujets influents")
 
-# Rechercher synergiesp
+# Rechercher synergies
 data_interest <- tpRetinol[, c("retplasma", "age", "sexe.fact", "bmi", "tabac.fact",
                                 "retdiet", "vitamine.fact", "cholesterol", "alcool")]
 regression_lineaire_synergies <- lm(data_interest$retplasma ~ .^2, data=data_interest)
@@ -193,7 +193,7 @@ for (i in 1:(length(synergies_interest)-1)) {
                  +tpRetinol[, independant_var[5]]
                  +tpRetinol[, independant_var[6]]
                  , data=tpRetinol)
-    p_value_interact <- drop1(result, .~., test="F")[10,6]
+    p_value_interact <- round(drop1(result, .~., test="F")[10,6], digits = 3)
     # Sauvegarder les résultats de la paire de variables
     results_list <- append(results_list,paste("petit p pour",interact1,"-",interact2,
                                               ":",p_value_interact,
@@ -248,7 +248,7 @@ for (i in 1:(length(synergies_interest)-1)) {
                  +tpRetinol[, independant_var[6]]
                  , data=data_interest_logicstic
                  , family = "binomial")
-    p_value_interact <- drop1(result, .~., test="Chisq")[10,5]
+    p_value_interact <- round(drop1(result, .~., test="Chisq")[10,5], digits = 3)
     # Sauvegarder les résultats de la paire de variables
     results_logistic_list <- append(results_logistic_list,paste("petit p pour",interact1,"-",interact2,
                                               ":",p_value_interact,
