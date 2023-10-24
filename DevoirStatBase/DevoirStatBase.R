@@ -60,7 +60,7 @@ tpRetinol$vitamine.fact <- factor(tpRetinol$vitamine,levels=c(1,2,3),
 # Calcul de correlation
 quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet", 
                        "retdiet", "cholesterol", "alcool")
-matrix_correlation <- cor(tpRetinol[, quantitative_var], use = "complete.obs")
+matrix_correlation <- round(cor(tpRetinol[, quantitative_var], use = "complete.obs"), digits = 3)
 corrplot(matrix_correlation, method = "circle")
 for (i in quantitative_var) {
   for (j in quantitative_var) {
