@@ -141,16 +141,18 @@ Compute_qualitative_stat("tabac", tabac_b, tabac_explicatives)
 # Question 3 Regression lineaire avec comme variable à expliquer "retinol plasmatique concentration"
 # et les autres variables explicatives
 regression_linaire <- lm(tpRetinol$retplasma~tpRetinol$age
-                         +tpRetinol$sexe
+                         +tpRetinol$sexe.fact
                          +tpRetinol$bmi
-                         +tpRetinol$tabac
+                         +tpRetinol$tabac.fact
                          +tpRetinol$retdiet
-                         +tpRetinol$vitamine
+                         +tpRetinol$vitamine.fact
                          +tpRetinol$cholesterol
                          +tpRetinol$alcool
                          , data=tpRetinol)
 summary(regression_linaire)
 hist(resid(regression_linaire), col="grey", main="")
+
+drop1(regression_linaire, .~., test="F")
 
 # Rechercher synergies
 data_interest <- tpRetinol[, c("retplasma", "age", "sexe.fact", "bmi", "tabac.fact",
