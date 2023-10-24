@@ -60,14 +60,24 @@ tpRetinol$vitamine.fact <- factor(tpRetinol$vitamine,levels=c(1,2,3),
 # Calcul de correlation
 quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet", 
                        "retdiet", "cholesterol", "alcool")
-matrix_correlation <- round(cor(tpRetinol[, quantitative_var], use = "complete.obs"), digits = 3)
+matrix_correlation <- cor(tpRetinol[, quantitative_var], use = "complete.obs")
+
+# Plot matrix de correlation
+x11()
 corrplot(matrix_correlation, method = "circle")
+
+df_correlation <- data.frame(name_correlation=character(),
+                             coeff_correlation=double(), 
+                             p_correlation=double())
+
 for (i in quantitative_var) {
   for (j in quantitative_var) {
     result <- cor.test(tpRetinol[, i], tpRetinol[, j], use = "complete.obs")
-    print(paste(i, j, result$estimate, result$p.value))
+    #print(paste(i, j, "coefficient", result$estimate, "p-value", result$p.value))
+    df_correlation[nrow(df_correlation) + 1,] <- list(paste(i, j), result$estimate, result$p.value)
   }
 }
+print(df_correlation)
 
 # Fonction permettant de réaliser un test de student pour comparer 2 moyennes
 Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
