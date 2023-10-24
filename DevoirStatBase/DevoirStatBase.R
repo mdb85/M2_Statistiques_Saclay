@@ -169,9 +169,6 @@ plot(regression_linaire, 4,
      main = "Recherche des sujets influents")
 
 # Rechercher synergies
-data_interest <- tpRetinol[, c("retplasma", "age", "sexe.fact", "bmi", "tabac.fact",
-                                "retdiet", "vitamine.fact", "cholesterol", "alcool")]
-
 synergies_interest <- c("age", "sexe.fact", "bmi", "tabac.fact", "retdiet", "vitamine.fact", "cholesterol", "alcool")
 results_list <- list()
 for (i in 1:(length(synergies_interest)-1)) {
@@ -204,29 +201,23 @@ print(results_list)
 
 # Question 4 Regression logistique
 regression_logistique <- glm(retinol_plasmatique_b~tpRetinol$age
-                             +tpRetinol$sexe
+                             +tpRetinol$sexe.fact
                              +tpRetinol$bmi
-                             +tpRetinol$tabac
+                             +tpRetinol$tabac.fact
                              +tpRetinol$retdiet
-                             +tpRetinol$vitamine
+                             +tpRetinol$vitamine.fact
                              +tpRetinol$cholesterol
                              +tpRetinol$alcool
                              , data=tpRetinol
                              , family = "binomial")
 summary(regression_logistique)
-exp(coefficients(regression_logistique)) # calcul des coefficients
-exp(confint(regression_logistique)) # calcul des intervalles de confiance
+# calcul des coefficients
+exp(coefficients(regression_logistique)) 
+# calcul des intervalles de confiance
+exp(confint(regression_logistique)) 
 drop1(regression_logistique,.~.,test="Chisq")
 
 # Rechercher synergies
-data_interest_logicstic <- data_interest
-data_interest_logicstic$retplasma <- retinol_plasmatique_b
-regression_logistique_synergies <- glm(data_interest_logicstic$retplasma ~ .^2, 
-                                      data=data_interest_logicstic,
-                                      family = "binomial")
-summary(regression_logistique_synergies)
-
-
 results_logistic_list <- list()
 for (i in 1:(length(synergies_interest)-1)) {
   for (j in (i+1):length(synergies_interest)) {
@@ -244,9 +235,9 @@ for (i in 1:(length(synergies_interest)-1)) {
                  +tpRetinol[, independant_var[4]]
                  +tpRetinol[, independant_var[5]]
                  +tpRetinol[, independant_var[6]]
-                 , data=data_interest_logicstic
+                 , data=tpRetinol
                  , family = "binomial")
-    p_value_interact <- round(drop1(result, .~., test="Chisq")[10,5], digits = 3)
+    p_value_interact <- drop1(result, .~., test="Chisq")[10,5]
     # Sauvegarder les résultats de la paire de variables
     results_logistic_list <- append(results_logistic_list,paste("petit p pour",interact1,"-",interact2,
                                               ":",p_value_interact,
