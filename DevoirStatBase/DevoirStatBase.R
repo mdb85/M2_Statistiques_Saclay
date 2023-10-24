@@ -144,7 +144,7 @@ regression_linaire <- lm(tpRetinol$retplasma~tpRetinol$age
                          +tpRetinol$sexe
                          +tpRetinol$bmi
                          +tpRetinol$tabac
-                         +tpRetinol$betadiet
+                         +tpRetinol$retdiet
                          +tpRetinol$vitamine
                          +tpRetinol$cholesterol
                          +tpRetinol$alcool
@@ -153,8 +153,8 @@ summary(regression_linaire)
 hist(resid(regression_linaire), col="grey", main="")
 
 # Rechercher synergies
-data_interest <- tpRetinol[, c("retplasma", "age", "sexe", "bmi", "tabac",
-                                "betadiet", "vitamine", "cholesterol", "alcool")]
+data_interest <- tpRetinol[, c("retplasma", "age", "sexe.fact", "bmi", "tabac.fact",
+                                "retdiet", "vitamine.fact", "cholesterol", "alcool")]
 regression_lineaire_synergies <- lm(data_interest$retplasma ~ .^2, data=data_interest)
 summary(regression_lineaire_synergies)
 
@@ -193,7 +193,7 @@ regression_logistique <- glm(retinol_plasmatique_b~tpRetinol$age
                              +tpRetinol$sexe
                              +tpRetinol$bmi
                              +tpRetinol$tabac
-                             +tpRetinol$betadiet
+                             +tpRetinol$retdiet
                              +tpRetinol$vitamine
                              +tpRetinol$cholesterol
                              +tpRetinol$alcool
