@@ -21,11 +21,88 @@ library(Epi)
 library(corrplot)
 
 # Question 1 : Décrivez vos variables
-tpRetinol <- read.csv2("C:/Users/Mehdi/Desktop/Statistiques/DevoirStatBase/presentationTPretinol.csv")
+tpRetinol <- read.csv2("/Users/nouria/Desktop/DevoirStatBase/M2_Statistiques_Saclay/DevoirStatBase/presentationTPretinol.csv")
+#tpRetinol <- read.csv2("C:/Users/Mehdi/Desktop/Statistiques/DevoirStatBase/presentationTPretinol.csv")
+
+# Nous avons trois variables qualitatives, qu'on va encoder comme facteurs.
+tpRetinol$sexe.fact     <- factor(tpRetinol$sexe,levels=c(1,2),
+                                  labels=c("Masculin","Féminin"))
+tpRetinol$tabac.fact    <- factor(tpRetinol$tabac,levels=c(1,2,3),
+                                  labels=c("Jamais","Autrefois","Actuellement"))
+tpRetinol$vitamine.fact <- factor(tpRetinol$vitamine,levels=c(1,2,3),
+                                  labels=c("Souvent","Pas souvent","Non"))
+
 summary(tpRetinol)
 describe(tpRetinol)
+describe(tpRetinol, num.desc = c("mean", "sd", "median", "min", "max", "valid.n"))
 table(tpRetinol$sexe, deparse.level=2, useNA = "always")
 table(tpRetinol$vitamine, useNA = "always")
+
+barplot(table(tpRetinol$sexe.fact),
+        col = c("blue", "red"))
+
+
+barplot(table(tpRetinol$tabac.fact),
+        col = c("green", "grey", "red"),
+        main = "Consommation de tabac dans l'échantillon")
+
+
+barplot(table(tpRetinol$vitamine.fact),
+        col = c("green", "grey", "red"),
+        main = "Consommation de vitamines dans l'échantillon")
+
+hist(tpRetinol$age,
+     main = "Ditribution de l'âge parmi l'échantillon",
+     xlab = "Age",
+     ylab = "")
+
+hist(tpRetinol$bmi,
+     main = "Ditribution du BMI parmi l'échantillon",
+     xlab = "BMI",
+     ylab = "")
+
+hist(tpRetinol$calories,
+     main = "Ditribution du nombre de calories par jour dans l'échantillon",
+     xlab = "Calories",
+     ylab = "")
+
+hist(tpRetinol$graisses,
+     main = "Ditribution de la consommation de graisses par jour dans l'échantillon",
+     xlab = "Graisses (g)",
+     ylab = "",
+     xlim = c(0,250))
+
+hist(tpRetinol$fibres,
+     main = "Ditribution de la consommation de fibres par jour dans l'échantillon",
+     xlab = "Fibres (g)",
+     ylab = "",
+     ylim = c(0, 140),
+     xlim = c(0,50))
+
+plot(jitter(tpRetinol$age), jitter(tpRetinol$alcool),
+     main = "Ditribution de la consommation d'alcool en fonction de l'âge",
+     xlab = "Age (années)",
+     ylab = "Alcool (verres/semaine)")
+
+hist(tpRetinol$retdiet,
+     main = "Ditribution de la consommation de rétinol dans l'échantillon",
+     xlab = "Rétinol (Mcg/j)",
+     ylab = "",
+     ylim = c(0, 200),
+     xlim = c(0,7000))
+
+hist(tpRetinol$retplasma,
+     main = "Ditribution du rétinol plasmatique dans l'échantillon",
+     xlab = "Rétinol plasmatique (ng/ml)",
+     ylab = "",
+     ylim = c(0, 150),
+     xlim = c(0,2000))
+
+boxplot(tpRetinol$retplasma~tpRetinol$sexe.fact,
+        main = "Ditribution du rétinol plasmatique dans l'échantillon",
+        xlab = "",
+        ylab = "Rétinol plasmatique",
+        col = c("blue", "red"))
 
 # Calcul des medians
 age_median <- median(tpRetinol$age)
@@ -45,14 +122,6 @@ retinol_conso_b <- ifelse(tpRetinol$retdiet > retinol_conso_median, 1, 0)
 cholesterol_b <- ifelse(tpRetinol$cholesterol > cholesterol_median, 1, 0)
 alcool_b <- ifelse(tpRetinol$alcool > alcool_median, 1, 0)
 retinol_plasmatique_b <- ifelse(tpRetinol$retplasma > retinol_plasmatique_median, 1, 0)
-
-# Nous avons trois variables qualitatives, qu'on va encoder comme facteurs.
-tpRetinol$sexe.fact     <- factor(tpRetinol$sexe,levels=c(1,2),
-                             labels=c("Masculin","Féminin"))
-tpRetinol$tabac.fact    <- factor(tpRetinol$tabac,levels=c(1,2,3),
-                             labels=c("Jamais","Autrefois","Actuellement"))
-tpRetinol$vitamine.fact <- factor(tpRetinol$vitamine,levels=c(1,2,3),
-                             labels=c("Souvent","Pas souvent","Non"))
 
 # Question 2 : 
 # variables dinteret : concentration retinol plasmatique, age, sexe, BMI, tabac, consommation alimentaire de vitamines, cholesterol, alcool, retinol
