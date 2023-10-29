@@ -19,6 +19,7 @@
 library(prettyR)
 library(Epi)
 library(corrplot)
+library(psy)
 
 # Question 1 : Décrivez vos variables
 tpRetinol <- read.csv2("/Users/nouria/Desktop/DevoirStatBase/M2_Statistiques_Saclay/DevoirStatBase/presentationTPretinol.csv")
@@ -326,3 +327,12 @@ for (i in 1:(length(synergies_interest)-1)) {
 }
 
 print(results_logistic_list)
+
+# Analyse en composante principale
+var_fact <- c("age", "sexe.fact", "bmi", "tabac.fact", "retdiet", "vitamine.fact", "cholesterol", "alcool")
+var <- c("age", "sexe", "bmi", "tabac", "retdiet", "vitamine", "cholesterol", "alcool")
+mdspca(tpRetinol[, var])
+sphpca(tpRetinol[, var], v = 55)
+
+  # Analyse en composante principale focalisée
+fpca(data=tpRetinol,y="retplasma",x=var_fact,partial="No")
