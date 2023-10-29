@@ -117,7 +117,7 @@ age_b <- ifelse(tpRetinol$age > age_median, 1, 0)
 bmi_b <- ifelse(tpRetinol$bmi > 25 , 1, 0)
 tabac_b <- ifelse(tpRetinol$tabac > 2 , 1, 0)
 sexe_b <- ifelse(tpRetinol$sexe==2 , 1, 0)
-beta_carotene_conso_b <- ifelse(tpRetinol$betadiet > beta_carotene_conso_median, 1, 0)
+vitamine_b <- ifelse(tpRetinol$vitamine > 2 , 1, 0)
 retinol_conso_b <- ifelse(tpRetinol$retdiet > retinol_conso_median, 1, 0)
 cholesterol_b <- ifelse(tpRetinol$cholesterol > cholesterol_median, 1, 0)
 alcool_b <- ifelse(tpRetinol$alcool > alcool_median, 1, 0)
@@ -127,7 +127,7 @@ retinol_plasmatique_b <- ifelse(tpRetinol$retplasma > retinol_plasmatique_median
 # variables dinteret : concentration retinol plasmatique, age, sexe, BMI, tabac, consommation alimentaire de vitamines, cholesterol, alcool, retinol
 
 # Calcul de correlation
-quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet", 
+quantitative_var <- c ("retplasma", "age", "bmi", "betadiet", 
                        "retdiet", "cholesterol", "alcool")
 matrix_correlation <- cor(tpRetinol[, quantitative_var], use = "complete.obs")
 
@@ -167,54 +167,54 @@ Compute_qualitative_stat <- function(name, var_expliquer, var_explicatives) {
 }
 
 # Retplasma
-retplasma_explicatives <- cbind(age_b, sexe_b, bmi_b, tabac_b, beta_carotene_conso_b, 
+retplasma_explicatives <- cbind(age_b, sexe_b, bmi_b, tabac_b, vitamine_b, 
            retinol_conso_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("retplasma", tpRetinol$retplasma, retplasma_explicatives)
 
 # Age
 qqnorm(tpRetinol$age)
 age_explicatives <- cbind(retinol_plasmatique_b, sexe_b, bmi_b, tabac_b, 
-                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+                          vitamine_b, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("age", tpRetinol$age, age_explicatives)
 
 # BMI
 qqnorm(tpRetinol$bmi)
 bmi_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, tabac_b, 
-                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+                          vitamine_b, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("bmi", tpRetinol$bmi, bmi_explicatives)
 
-# Betadiet
-qqnorm(tpRetinol$betadiet)
-betadiet_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
+# Vitamine
+qqnorm(tpRetinol$vitamine)
+vitamine_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
                           tabac_b, retinol_conso_b, cholesterol_b, alcool_b)
-Compute_quantitative_stat("betadiet", tpRetinol$betadiet, betadiet_explicatives)
+Compute_qualitative_stat("vitamine", vitamine_b, vitamine_explicatives)
 
 # Retinoldiet
 qqnorm(tpRetinol$retdiet)
 retdiet_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
-                               tabac_b, beta_carotene_conso_b, cholesterol_b, alcool_b)
+                               tabac_b, vitamine_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("retdiet", tpRetinol$retdiet, retdiet_explicatives)
 
 # Cholesterol
 qqnorm(tpRetinol$cholesterol)
 cholesterol_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
-                              tabac_b, beta_carotene_conso_b, retinol_conso_b, alcool_b)
+                              tabac_b, vitamine_b, retinol_conso_b, alcool_b)
 Compute_quantitative_stat("cholesterol", tpRetinol$cholesterol, cholesterol_explicatives)
 
 # Alcool
 qqnorm(tpRetinol$alcool)
 alcool_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
-                                  tabac_b, beta_carotene_conso_b, retinol_conso_b, cholesterol_b)
+                                  tabac_b, vitamine_b, retinol_conso_b, cholesterol_b)
 Compute_quantitative_stat("alcool", tpRetinol$alcool, alcool_explicatives)
 
 # Sexe
 sexe_explicatives <- cbind(retinol_plasmatique_b, age_b, bmi_b, tabac_b, 
-                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+                          vitamine_b, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_qualitative_stat("sexe", sexe_b, sexe_explicatives)
 
 # Tabac
 tabac_explicatives <- cbind(retinol_plasmatique_b, age_b, bmi_b, sexe_b, 
-                           beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+                           vitamine_b, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_qualitative_stat("tabac", tabac_b, tabac_explicatives)
 
 # Question 3 Regression lineaire avec comme variable à expliquer "retinol plasmatique concentration"
