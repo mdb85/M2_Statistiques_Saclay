@@ -165,6 +165,14 @@ for (i in quantitative_var) {
 }
 print(df_correlation)
 
+# Correlation selon SPEARMAN pour la variable age
+cor.test(tpRetinol$age, tpRetinol$retplasma, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$bmi, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$betadiet, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$retdiet, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$cholesterol, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$alcool, method = "spearman", use = "complete.obs")
+
 # Fonction permettant de réaliser un test de student pour comparer 2 moyennes
 Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
   for(i in 1:ncol(var_explicatives)) {
