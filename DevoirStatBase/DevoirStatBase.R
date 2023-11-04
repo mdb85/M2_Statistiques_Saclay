@@ -230,9 +230,13 @@ regression_linaire <- lm(tpRetinol$retplasma~tpRetinol$age
                          +tpRetinol$alcool
                          , data=tpRetinol)
 summary(regression_linaire)
-hist(resid(regression_linaire), col="grey", main="")
-
 drop1(regression_linaire, .~., test="F")
+
+# Histogramme des résidus du modele lineaire
+x11()
+hist(resid(regression_linaire), col="grey"
+     , main="Histogramme des résidus\n"
+     , xlab = "Résidus du modèle de régression linéaire\n")
 
 # Diagramme de normalité
 x11()
