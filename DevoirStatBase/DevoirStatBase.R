@@ -80,10 +80,26 @@ hist(tpRetinol$fibres,
      ylim = c(0, 140),
      xlim = c(0,50))
 
+dev.new()
+hist(tpRetinol$cholesterol,
+     main = "Ditribution de la consommation de cholestérol par jour\n",
+     xlab = "Cholestérol (mg)",
+     ylab = "")
+dev.off()
+
 plot(jitter(tpRetinol$age), jitter(tpRetinol$alcool),
      main = "Ditribution de la consommation d'alcool en fonction de l'âge",
      xlab = "Age (années)",
      ylab = "Alcool (verres/semaine)")
+
+dev.new()
+hist(tpRetinol$betadiet,
+     main = "Ditribution de la consommation de beta-carotène par jour",
+     xlab = "Beta-diet (Mcg)",
+     ylab = "",
+     ylim = c(0, 130),
+     xlim = c(0, 12000))
+dev.off()
 
 hist(tpRetinol$retdiet,
      main = "Ditribution de la consommation de rétinol dans l'échantillon",
