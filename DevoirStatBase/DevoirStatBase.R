@@ -19,13 +19,107 @@
 library(prettyR)
 library(Epi)
 library(corrplot)
+library(psy)
 
 # Question 1 : Décrivez vos variables
-tpRetinol <- read.csv2("C:/Users/Mehdi/Desktop/Statistiques/DevoirStatBase/presentationTPretinol.csv")
+tpRetinol <- read.csv2("/Users/nouria/Desktop/DevoirStatBase/M2_Statistiques_Saclay/DevoirStatBase/presentationTPretinol.csv")
+#tpRetinol <- read.csv2("C:/Users/Mehdi/Desktop/Statistiques/DevoirStatBase/presentationTPretinol.csv")
+
+# Nous avons trois variables qualitatives, qu'on va encoder comme facteurs.
+tpRetinol$sexe.fact     <- factor(tpRetinol$sexe,levels=c(1,2),
+                                  labels=c("Masculin","Féminin"))
+tpRetinol$tabac.fact    <- factor(tpRetinol$tabac,levels=c(1,2,3),
+                                  labels=c("Jamais","Autrefois","Actuellement"))
+tpRetinol$vitamine.fact <- factor(tpRetinol$vitamine,levels=c(1,2,3),
+                                  labels=c("Souvent","Pas souvent","Non"))
+
 summary(tpRetinol)
 describe(tpRetinol)
+describe(tpRetinol, num.desc = c("mean", "sd", "median", "min", "max", "valid.n"))
 table(tpRetinol$sexe, deparse.level=2, useNA = "always")
 table(tpRetinol$vitamine, useNA = "always")
+
+barplot(table(tpRetinol$sexe.fact),
+        col = c("blue", "red"))
+
+
+barplot(table(tpRetinol$tabac.fact),
+        col = c("green", "grey", "red"),
+        main = "Consommation de tabac dans l'échantillon")
+
+
+barplot(table(tpRetinol$vitamine.fact),
+        col = c("green", "grey", "red"),
+        main = "Consommation de vitamines dans l'échantillon")
+
+hist(tpRetinol$age,
+     main = "Ditribution de l'âge parmi l'échantillon",
+     xlab = "Age",
+     ylab = "")
+
+hist(tpRetinol$bmi,
+     main = "Ditribution du BMI parmi l'échantillon",
+     xlab = "BMI",
+     ylab = "")
+
+hist(tpRetinol$calories,
+     main = "Ditribution du nombre de calories par jour dans l'échantillon",
+     xlab = "Calories",
+     ylab = "")
+
+hist(tpRetinol$graisses,
+     main = "Ditribution de la consommation de graisses par jour dans l'échantillon",
+     xlab = "Graisses (g)",
+     ylab = "",
+     xlim = c(0,250))
+
+hist(tpRetinol$fibres,
+     main = "Ditribution de la consommation de fibres par jour dans l'échantillon",
+     xlab = "Fibres (g)",
+     ylab = "",
+     ylim = c(0, 140),
+     xlim = c(0,50))
+
+dev.new()
+hist(tpRetinol$cholesterol,
+     main = "Ditribution de la consommation de cholestérol par jour\n",
+     xlab = "Cholestérol (mg)",
+     ylab = "")
+dev.off()
+
+plot(jitter(tpRetinol$age), jitter(tpRetinol$alcool),
+     main = "Ditribution de la consommation d'alcool en fonction de l'âge",
+     xlab = "Age (années)",
+     ylab = "Alcool (verres/semaine)")
+
+dev.new()
+hist(tpRetinol$betadiet,
+     main = "Ditribution de la consommation de beta-carotène par jour",
+     xlab = "Beta-diet (Mcg)",
+     ylab = "",
+     ylim = c(0, 130),
+     xlim = c(0, 12000))
+dev.off()
+
+hist(tpRetinol$retdiet,
+     main = "Ditribution de la consommation de rétinol dans l'échantillon",
+     xlab = "Rétinol (Mcg/j)",
+     ylab = "",
+     ylim = c(0, 200),
+     xlim = c(0,7000))
+
+hist(tpRetinol$retplasma,
+     main = "Ditribution du rétinol plasmatique dans l'échantillon",
+     xlab = "Rétinol plasmatique (ng/ml)",
+     ylab = "",
+     ylim = c(0, 150),
+     xlim = c(0,2000))
+
+boxplot(tpRetinol$retplasma~tpRetinol$sexe.fact,
+        main = "Ditribution du rétinol plasmatique dans l'échantillon",
+        xlab = "",
+        ylab = "Rétinol plasmatique",
+        col = c("blue", "red"))
 
 # Calcul des medians
 age_median <- median(tpRetinol$age)
@@ -40,25 +134,17 @@ age_b <- ifelse(tpRetinol$age > age_median, 1, 0)
 bmi_b <- ifelse(tpRetinol$bmi > 25 , 1, 0)
 tabac_b <- ifelse(tpRetinol$tabac > 2 , 1, 0)
 sexe_b <- ifelse(tpRetinol$sexe==2 , 1, 0)
-beta_carotene_conso_b <- ifelse(tpRetinol$betadiet > beta_carotene_conso_median, 1, 0)
+vitamine_b <- ifelse(tpRetinol$vitamine > 2 , 1, 0)
 retinol_conso_b <- ifelse(tpRetinol$retdiet > retinol_conso_median, 1, 0)
 cholesterol_b <- ifelse(tpRetinol$cholesterol > cholesterol_median, 1, 0)
 alcool_b <- ifelse(tpRetinol$alcool > alcool_median, 1, 0)
 retinol_plasmatique_b <- ifelse(tpRetinol$retplasma > retinol_plasmatique_median, 1, 0)
 
-# Nous avons trois variables qualitatives, qu'on va encoder comme facteurs.
-tpRetinol$sexe.fact     <- factor(tpRetinol$sexe,levels=c(1,2),
-                             labels=c("Masculin","Féminin"))
-tpRetinol$tabac.fact    <- factor(tpRetinol$tabac,levels=c(1,2,3),
-                             labels=c("Jamais","Autrefois","Actuellement"))
-tpRetinol$vitamine.fact <- factor(tpRetinol$vitamine,levels=c(1,2,3),
-                             labels=c("Souvent","Pas souvent","Non"))
-
 # Question 2 : 
 # variables dinteret : concentration retinol plasmatique, age, sexe, BMI, tabac, consommation alimentaire de vitamines, cholesterol, alcool, retinol
 
 # Calcul de correlation
-quantitative_var <- c ("retplasma", "age", "bmi", "tabac", "betadiet", 
+quantitative_var <- c ("retplasma", "age", "bmi", "betadiet", 
                        "retdiet", "cholesterol", "alcool")
 matrix_correlation <- cor(tpRetinol[, quantitative_var], use = "complete.obs")
 
@@ -79,9 +165,17 @@ for (i in quantitative_var) {
 }
 print(df_correlation)
 
+# Correlation selon SPEARMAN pour la variable age
+cor.test(tpRetinol$age, tpRetinol$retplasma, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$bmi, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$betadiet, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$retdiet, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$cholesterol, method = "spearman", use = "complete.obs")
+cor.test(tpRetinol$age, tpRetinol$alcool, method = "spearman", use = "complete.obs")
+
 # Fonction permettant de réaliser un test de student pour comparer 2 moyennes
 Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
-  for(i in 1:ncol(age_explicatives)) {
+  for(i in 1:ncol(var_explicatives)) {
     result <- t.test(var_expliquer~var_explicatives[, i]
                      , var.equal=TRUE, paired = FALSE)
     print(paste(name, colnames(var_explicatives)[i], result$p.value))
@@ -90,7 +184,7 @@ Compute_quantitative_stat <- function(name, var_expliquer, var_explicatives) {
 
 # Fonction permettant de réaliser un test du chi 2
 Compute_qualitative_stat <- function(name, var_expliquer, var_explicatives) {
-  for(i in 1:ncol(age_explicatives)) {
+  for(i in 1:ncol(var_explicatives)) {
     #rr <- twoby2(1-var_expliquer, 1-var_explicatives[, i])
     result <- chisq.test(var_expliquer, var_explicatives[, i])
     print(paste(name, colnames(var_explicatives)[i], result$p.value))
@@ -98,54 +192,54 @@ Compute_qualitative_stat <- function(name, var_expliquer, var_explicatives) {
 }
 
 # Retplasma
-retplasma_explicatives <- cbind(age_b, sexe_b, bmi_b, tabac_b, beta_carotene_conso_b, 
+retplasma_explicatives <- cbind(age_b, sexe_b, bmi_b, tabac_b, vitamine_b, 
            retinol_conso_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("retplasma", tpRetinol$retplasma, retplasma_explicatives)
 
 # Age
 qqnorm(tpRetinol$age)
 age_explicatives <- cbind(retinol_plasmatique_b, sexe_b, bmi_b, tabac_b, 
-                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+                          vitamine_b, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("age", tpRetinol$age, age_explicatives)
 
 # BMI
 qqnorm(tpRetinol$bmi)
 bmi_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, tabac_b, 
-                          beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+                          vitamine_b, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("bmi", tpRetinol$bmi, bmi_explicatives)
 
-# Betadiet
-qqnorm(tpRetinol$betadiet)
-betadiet_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
+# Vitamine
+qqnorm(tpRetinol$vitamine)
+vitamine_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
                           tabac_b, retinol_conso_b, cholesterol_b, alcool_b)
-Compute_quantitative_stat("betadiet", tpRetinol$betadiet, betadiet_explicatives)
+Compute_qualitative_stat("vitamine", vitamine_b, vitamine_explicatives)
 
 # Retinoldiet
 qqnorm(tpRetinol$retdiet)
 retdiet_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
-                               tabac_b, beta_carotene_conso_b, cholesterol_b, alcool_b)
+                               tabac_b, vitamine_b, cholesterol_b, alcool_b)
 Compute_quantitative_stat("retdiet", tpRetinol$retdiet, retdiet_explicatives)
 
 # Cholesterol
 qqnorm(tpRetinol$cholesterol)
 cholesterol_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
-                              tabac_b, beta_carotene_conso_b, retinol_conso_b, alcool_b)
+                              tabac_b, vitamine_b, retinol_conso_b, alcool_b)
 Compute_quantitative_stat("cholesterol", tpRetinol$cholesterol, cholesterol_explicatives)
 
 # Alcool
 qqnorm(tpRetinol$alcool)
 alcool_explicatives <- cbind(retinol_plasmatique_b, age_b, sexe_b, bmi_b, 
-                                  tabac_b, beta_carotene_conso_b, retinol_conso_b, cholesterol_b)
+                                  tabac_b, vitamine_b, retinol_conso_b, cholesterol_b)
 Compute_quantitative_stat("alcool", tpRetinol$alcool, alcool_explicatives)
 
 # Sexe
 sexe_explicatives <- cbind(retinol_plasmatique_b, age_b, bmi_b, tabac_b, 
-                          beta_carotene_conso_b:w, retinol_conso_b, cholesterol_b, alcool_b)
+                          vitamine_b, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_qualitative_stat("sexe", sexe_b, sexe_explicatives)
 
 # Tabac
 tabac_explicatives <- cbind(retinol_plasmatique_b, age_b, bmi_b, sexe_b, 
-                           beta_carotene_conso_b, retinol_conso_b, cholesterol_b, alcool_b)
+                           vitamine_b, retinol_conso_b, cholesterol_b, alcool_b)
 Compute_qualitative_stat("tabac", tabac_b, tabac_explicatives)
 
 # Question 3 Regression lineaire avec comme variable à expliquer "retinol plasmatique concentration"
@@ -160,9 +254,13 @@ regression_linaire <- lm(tpRetinol$retplasma~tpRetinol$age
                          +tpRetinol$alcool
                          , data=tpRetinol)
 summary(regression_linaire)
-hist(resid(regression_linaire), col="grey", main="")
-
 drop1(regression_linaire, .~., test="F")
+
+# Histogramme des résidus du modele lineaire
+x11()
+hist(resid(regression_linaire), col="grey"
+     , main="Histogramme des résidus\n"
+     , xlab = "Résidus du modèle de régression linéaire\n")
 
 # Diagramme de normalité
 x11()
@@ -257,3 +355,12 @@ for (i in 1:(length(synergies_interest)-1)) {
 }
 
 print(results_logistic_list)
+
+# Analyse en composante principale
+var_fact <- c("age", "sexe.fact", "bmi", "tabac.fact", "retdiet", "vitamine.fact", "cholesterol", "alcool")
+var <- c("age", "sexe", "bmi", "tabac", "retdiet", "vitamine", "cholesterol", "alcool")
+mdspca(tpRetinol[, var])
+sphpca(tpRetinol[, var], v = 55)
+
+  # Analyse en composante principale focalisée
+fpca(data=tpRetinol,y="retplasma",x=var_fact,partial="No")
