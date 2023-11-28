@@ -1,6 +1,8 @@
 library(readxl)
 library(reshape2)
 library(dplyr)
+library(psy)
+library(psych)
 
 # Importation des fichiers
 autoeval <- read_excel("C:/Users/Mehdi/Desktop/Statistiques/DevoirStatAvance/outils autoeval.xls")
@@ -59,7 +61,7 @@ hdrs_items_J0 <- hdrs[hdrs$VISIT == "J0", hdrs_col]
 # Sélectionner les colonnes pour J56
 hdrs_items_J56 <- hdrs[hdrs1$VISIT == "J56", hdrs_col]
 
-# Diagramme en baton 
+# Diagramme en baton à J0 et J56
 for (j in hdrs_col) {
   x11()
   barplot(table(hdrs_items_J0[, j], useNA = "ifany"), main = j, col = "lightblue") 
@@ -69,6 +71,7 @@ for (j in hdrs_col) {
   barplot(table(hdrs_items_J56[, j], useNA = "ifany"), main = j, col = "lightblue") 
 }
 
+
 # Verifier si y a un effet plafond
 
 # Verifier si y a un effet plancher
@@ -77,7 +80,14 @@ for (j in hdrs_col) {
 
 # On peut faire une matrice de correlation (pas indispensable)
 
-# 2 - Diagramme des valeurs propres (pour savoir combien y a de dimensions) (que vaut la mesure)
+# 2 - Diagramme des valeurs propres (pour savoir combien y a de dimensions) 
+par(mar = c(1, 1, 1, 1))
+scree.plot(hamd_J0[, 1:17]
+           , simu=20
+           , title="Diagramme des valeurs propres à J0")
+scree.plot(hamd_J56[, 1:17]
+           , simu=20
+           , title="Diagramme des valeurs propres à J56")
 # On fera une analyse factorielle si jamais y a plus d une dimension
 # Calcul du Coefficient de crohnback
 
