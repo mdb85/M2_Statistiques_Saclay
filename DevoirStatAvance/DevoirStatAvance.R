@@ -11,6 +11,8 @@ View(groupe)
 hdrs <- read_excel("C:/Users/Mehdi/Desktop/Statistiques/DevoirStatAvance/outils hdrs.xls")
 View(hdrs)
 
+# HAMD16A : perte de poids releve par lexamen clinique
+# HAMD16B : perte de poids releve en pesant le sujet
 # Fusionner HAMD16A et HAMD16B afin d'eliminer les NA
 hdrs$HAMD16 <- ifelse(is.na(hdrs$HAMD16A),hdrs$HAMD16B,hdrs$HAMD16A)
 
@@ -22,3 +24,8 @@ reshaped_data <- melt(outils_hdrs, id.vars = c("NUMERO", "VISIT"))
 View(reshaped_data)
 large_outils_hdrs<- dcast(melt(outils_hdrs,id.vars = c("NUMERO", "VISIT")),NUMERO~variable+VISIT)
 View(large_outils_hdrs)
+
+########### Question 1 ###########
+# 
+# Diagramme des valeurs propres
+# Validation concourante et divergente
