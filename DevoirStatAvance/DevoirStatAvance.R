@@ -72,9 +72,19 @@ for (j in hdrs_col) {
 }
 
 
-# Verifier si y a un effet plafond
+# Verifier si y a un effet plafond/effet plancher pour J0 et J56
+verifierEffetPlancherPplafond<- function(col, data) {
+  for (j in col) {
+    cc <- data[, j]
+    tcc <- table(cc)
+    pp<- 100*(tcc/sum(tcc))
+    print(table(cc))
+    print(pp)
+  }
+}
 
-# Verifier si y a un effet plancher
+verifierEffetPlancherPplafond(hdrs_col, hdrs_items_J0)
+verifierEffetPlancherPplafond(hdrs_col, hdrs_items_J56)
 
 # Verifier si y a des beaucoup de donnees manquantes
 
